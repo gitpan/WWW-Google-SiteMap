@@ -1,5 +1,10 @@
 Revision history for Perl extension WWW::Google::SiteMap.
 
+0.03
+    - Changed from XML::Simple to XML::Twig for XML parsing/generating, this
+      means you can now validate your sitemaps with an XML validator.
+    - Fixed some documentation errors, spotted by Ing. Branislav Gerzo
+
 0.02  Fri Jun  3 17:04:57 2005
     - Renamed from Google::SiteMap to WWW::Google::SiteMap, shouldn't have
       created a new top-level namespace in the first place.

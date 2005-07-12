@@ -3,6 +3,7 @@ Makefile.PL
 MANIFEST
 README
 t/WWW-Google-SiteMap.t
+t/WWW-Google-SiteMap-URL.t
 lib/WWW/Google/SiteMap.pm
 lib/WWW/Google/SiteMap/URL.pm
 META.yml                                 Module meta-data (added by MakeMaker)

@@ -3,8 +3,7 @@ WriteMakefile(
 	NAME				=> 'WWW::Google::SiteMap',
 	VERSION_FROM		=> 'lib/WWW/Google/SiteMap.pm',
 	PREREQ_PM			=> {
-		'XML::Simple'		=> 0,
-		'IO::Zlib'			=> 0,
+		'XML::Twig'			=> 0,
 		'IO::File'			=> 0,
 	},
 	($] >= 5.005 ? (

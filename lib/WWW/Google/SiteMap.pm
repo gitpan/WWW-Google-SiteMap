@@ -1,5 +1,5 @@
 package WWW::Google::SiteMap;
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 =head1 NAME
 
@@ -47,10 +47,10 @@ This module allows you to create and modify sitemaps.
 
 use strict;
 use warnings;
-use WWW::Google::SiteMap::URL;
-require XML::Simple;
-require IO::Zlib;
-require IO::File;
+use WWW::Google::SiteMap::URL qw();
+use XML::Twig qw();
+my $ZLIB = eval "use IO::Zlib ()";
+use IO::File qw();
 require UNIVERSAL;
 use Carp qw(carp croak);
 
@@ -87,21 +87,39 @@ sub read {
 	my $file = shift || $self->file ||
 		croak "No filename specified for WWW::Google::SiteMap::read";
 
+	# don't try to parse missing or empty files
+	return unless -f $file && -s $file;
+	
+	# don't try to parse very small compressed files
+	# (empty .gz files are 20 bytes)
+	return if $file =~ /\.gz/ && -s $file < 50;
+
 	my $fh;
 	if($file =~ /\.gz$/i) {
+		croak "IO::Zlib not available, cannot write compressed sitemaps"
+			unless $ZLIB;
 		$fh = IO::Zlib->new($file,"rb");
 	} else {
 		$fh = IO::File->new($file,"r");
 	}
-	# I think there is a strange bug interaction between IO::Zlib and
-	# XML::Simple, just passing the filehandle to XMLin doesn't work
-	my $tmp = XML::Simple::XMLin(join('',$fh->getlines),
-		ForceArray	=> [qw(url)],
+	my @urls = ();
+	my $twig = XML::Twig->new(
+		twig_roots => {
+			'urlset/url'	=> sub {
+				my $self = shift;
+				my $elt = shift;
+
+				my $url = WWW::Google::SiteMap::URL->new();
+				foreach my $c ($elt->children) {
+					my $var = $c->gi; $url->$var($c->text);
+				}
+				$self->purge;
+				push(@urls,$url);
+			},
+		},
 	);
-	$self->xmlns($tmp->{xmlns}) if $tmp->{xmlns};
-	$self->urls(map {
-		WWW::Google::SiteMap::URL->new(%{$_}, lenient => 1)
-	} @{$tmp->{url}});
+	$twig->safe_parse(join('',$fh->getlines)) || die "Could not parse $file";
+	$self->urls(@urls);
 }
 
 =item write([$file])
@@ -120,6 +138,8 @@ sub write {
 
 	my $fh;
 	if($file =~ /\.gz$/i) {
+		croak "IO::Zlib not available, cannot read compressed sitemaps"
+			unless $ZLIB;
 		$fh = IO::Zlib->new($file,"wb9");
 	} else {
 		$fh = IO::File->new($file,"w");
@@ -217,18 +237,19 @@ Return the xml representation of the sitemap
 sub xml {
 	my $self = shift;
 
-	return XML::Simple::XMLout(
-		{
-			xmlns			=> $self->xmlns,
-			url				=> [map { $_->hash } $self->urls],
-		},
-		AttrIndent		=> $self->pretty,
-		NoIndent		=> !$self->pretty,
-		NoSort			=> !$self->pretty,
-		SuppressEmpty	=> 1,
-		RootName		=> 'urlset',
-		XMLDecl			=> '<?xml version="1.0" encoding="UTF-8"?>',
-	);
+	my $xml = XML::Twig::Elt->new('urlset', {
+		'xmlns'	=> 'http://www.google.com/schemas/sitemap/0.84',
+		'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
+		'xsi:schemaLocation' => join(' ',
+			'http://www.google.com/schemas/sitemap/0.84',
+			'http://www.google.com/schemas/sitemap/0.84/sitemap.xsd',
+		),
+	});
+	foreach($self->urls) {
+		$_->as_elt->paste(last_child => $xml);
+	}
+	$xml->set_pretty_print($self->pretty);
+	return $xml->sprint();
 }
 
 =item file()
@@ -244,30 +265,33 @@ sub file {
 	return $self->{file};
 }
 
-=item xmlns()
-
-Get or set the XML namespace to be used for the urlset.  Default is
-http://www.google.com/schemas/sitemap/0.84
-
-=cut
-
-sub xmlns {
-	my $self = shift;
-	$self->{xmlns} = shift if @_;
-	return $self->{xmlns} || 'http://www.google.com/schemas/sitemap/0.84';
-}
-
 =item pretty()
 
 Set this to a true value to enable 'pretty-printing' on the XML output.  If
 false (the default) the XML will be more compact but not as easily readable
 for humans (Google and other computers won't care what you set this to).
 
+If you set this to a 'word' (something that matches /[a-z]/i), then that
+value will be passed to XML::Twig directly (see the L<XML::Twig> pretty_print
+documentation).  Otherwise if a true value is passed, it means 'nice', and a
+false value means 'none'.
+
+Returns the value it was set to, or the current value if called with no
+arguments.
+
 =cut
 
 sub pretty {
 	my $self = shift;
-	$self->{pretty} = shift if @_;
+	my $val = shift || return $self->{pretty} || 'none';
+
+	if($val =~ /[a-z]/i) {
+		$self->{pretty} = $val;
+	} elsif($val) {
+		$self->{pretty} = 'nice';
+	} else {
+		$self->{pretty} = 'none';
+	}
 	return $self->{pretty};
 }
 

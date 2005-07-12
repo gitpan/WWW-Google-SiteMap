@@ -1,5 +1,5 @@
 package WWW::Google::SiteMap::URL;
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 =head1 NAME
 
@@ -22,6 +22,7 @@ This is a helper class that supports L<WWW::Google::SiteMap>.
 use strict;
 use warnings;
 use Carp qw(carp croak);
+use XML::Twig qw();
 
 =item new()
 
@@ -140,19 +141,12 @@ sub lenient {
 	return $self->{lenient};
 }
 
-=item hash()
-
-Return a hashref of the data.  This is used internally by
-L<WWW::Google::SiteMap> to provide a data structure more suitable to
-passing to L<XML::Simple>.
-
-=cut
-
-sub hash {
+sub as_elt {
 	my $self = shift;
-	my $hash = {%{$self}};
-	delete($hash->{$_}) for grep { ! $hash->{$_} } keys %{$hash};
-	return $hash;
+	my $twig = shift;
+	return XML::Twig::Elt->new('url', {}, map {
+		XML::Twig::Elt->new($_,{},$self->{$_})
+	} grep { defined $self->{$_} } qw(loc changefreq lastmod priority));
 }
 
 =back
