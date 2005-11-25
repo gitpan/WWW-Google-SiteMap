@@ -4,6 +4,10 @@ MANIFEST
 README
 t/WWW-Google-SiteMap.t
 t/WWW-Google-SiteMap-URL.t
+t/WWW-Google-SiteMap-Index.t
+t/WWW-Google-SiteMap-Ping.t
 lib/WWW/Google/SiteMap.pm
 lib/WWW/Google/SiteMap/URL.pm
+lib/WWW/Google/SiteMap/Index.pm
+lib/WWW/Google/SiteMap/Ping.pm
 META.yml                                 Module meta-data (added by MakeMaker)

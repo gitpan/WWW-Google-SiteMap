@@ -1,7 +1,7 @@
 use Test::More tests => 1;
 BEGIN { use_ok('WWW::Google::SiteMap') };
 
-my $baseurl = "http://www.jasonkohles.com/software/www-google-sitemap";
+my $baseurl = "http://www.jasonkohles.com/software/WWW-Google-SiteMap";
 
 my $map = WWW::Google::SiteMap->new(file => 'test.xml', pretty => 'indented');
 $map->add(WWW::Google::SiteMap::URL->new(

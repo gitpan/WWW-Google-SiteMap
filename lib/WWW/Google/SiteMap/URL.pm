@@ -1,5 +1,5 @@
 package WWW::Google::SiteMap::URL;
-our $VERSION = '0.03';
+our $VERSION = '1.00';
 
 =head1 NAME
 
@@ -11,7 +11,10 @@ WWW::Google::SiteMap::URL - URL Helper class for WWW::Google::SiteMap
 
 =head1 DESCRIPTION
 
-This is a helper class that supports L<WWW::Google::SiteMap>.
+This is a helper class that supports L<WWW::Google::SiteMap> and
+L<WWW::Google::SiteMap::Index>.
+
+=cut
 
 =head1 METHODS
 
@@ -39,7 +42,9 @@ sub new {
 
 =item loc()
 
-Change the URL associated with this object.
+Change the URL associated with this object.  For a L<WWW::Google::SiteMap>
+this specifies the URL to add to the sitemap, for a
+L<WWW::Google::SiteMap::Index>, this is the URL to the sitemap.
 
 =cut
 
@@ -55,7 +60,8 @@ sub loc {
 
 =item changefreq()
 
-Set the change frequency of the object.
+Set the change frequency of the object.  This field is not used in sitemap
+indexes, only in sitemaps.
 
 =cut
 
@@ -81,7 +87,7 @@ sub lastmod {
 		local $_ = shift;
 		return unless defined;
 		return 'must be an ISO-8601 formatted date string' unless (
-			/^\d{4}-\d{2}-\d{2}(T\d\d:\d\d:\d\d\+\d\d:\d\d)?$/
+			/^\d{4}-\d{2}-\d{2}(T\d\d:\d\d(:\d\d)?(\+\d\d:\d\d)?)?$/
 		);
 		return;
 	}, @_);
@@ -89,7 +95,7 @@ sub lastmod {
 
 =item priority()
 
-Set the priority.
+Set the priority.  This field is not used in sitemap indexes, only in sitemaps.
 
 =cut
 
@@ -120,7 +126,7 @@ sub _doval {
 
 =item delete()
 
-Delete this object from the sitemap.
+Delete this object from the sitemap or the sitemap index.
 
 =cut
 
@@ -143,17 +149,27 @@ sub lenient {
 
 sub as_elt {
 	my $self = shift;
-	my $twig = shift;
-	return XML::Twig::Elt->new('url', {}, map {
+	my $type = shift || 'url';
+	my @fields = @_;
+	unless(@fields) {
+		@fields = qw(loc changefreq lastmod priority);
+	}
+	return XML::Twig::Elt->new($type, {}, map {
 		XML::Twig::Elt->new($_,{},$self->{$_})
-	} grep { defined $self->{$_} } qw(loc changefreq lastmod priority));
+	} grep { defined $self->{$_} } @fields);
 }
 
 =back
 
 =head1 SEE ALSO
 
-L<http://www.jasonkohles.com/software/www-google-sitemap/>
+L<WWW::Google::SiteMap>
+
+L<WWW::Google::SiteMap::Index>
+
+L<WWW::Google::SiteMap::Ping>
+
+L<http://www.jasonkohles.com/software/WWW-Google-SiteMap/>
 
 L<https://www.google.com/webmasters/sitemaps/docs/en/protocol.html>
 

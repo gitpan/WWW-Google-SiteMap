@@ -1,5 +1,5 @@
 package WWW::Google::SiteMap;
-our $VERSION = '0.03';
+our $VERSION = '1.00';
 
 =head1 NAME
 
@@ -39,27 +39,29 @@ such as when they were last modified, how frequently they change, etc.
 
 This module allows you to create and modify sitemaps.
 
-=head1 METHODS
-
-=over 4
-
 =cut
 
 use strict;
 use warnings;
 use WWW::Google::SiteMap::URL qw();
 use XML::Twig qw();
-my $ZLIB = eval "use IO::Zlib ()";
+unless($IO::Zlib::VERSION) { eval "use IO::Zlib ()"; }
+my $ZLIB = $IO::Zlib::VERSION;
 use IO::File qw();
 require UNIVERSAL;
 use Carp qw(carp croak);
+
+=head1 METHODS
+
+=over 4
+
 
 =item new()
 
 Creates a new WWW::Google::SiteMap object.
 
   my $map = WWW::Google::SiteMap->new(
-    file	=> 'sitemap.gz',
+    file => 'sitemap.gz',
   );
 
 =cut
@@ -67,7 +69,7 @@ Creates a new WWW::Google::SiteMap object.
 sub new {
 	my $class = shift;
 	my %opts = @_;
-	my $self = bless({}, $class);
+	my $self = bless({}, ref($class) || $class);
 	while(my($key,$value) = each %opts) { $self->$key($value) }
 	if($self->file && -e $self->file) { $self->read }
 	return $self;
@@ -85,9 +87,10 @@ automatically if the filename ends with .gz.
 sub read {
 	my $self = shift;
 	my $file = shift || $self->file ||
-		croak "No filename specified for WWW::Google::SiteMap::read";
+		croak "No filename specified for ".(ref($self)||$self)."::read";
 
 	# don't try to parse missing or empty files
+	# no errors for this, because we might be creating it
 	return unless -f $file && -s $file;
 	
 	# don't try to parse very small compressed files
@@ -96,26 +99,28 @@ sub read {
 
 	my $fh;
 	if($file =~ /\.gz$/i) {
-		croak "IO::Zlib not available, cannot write compressed sitemaps"
+		croak "IO::Zlib not available, cannot read compressed sitemaps"
 			unless $ZLIB;
 		$fh = IO::Zlib->new($file,"rb");
 	} else {
 		$fh = IO::File->new($file,"r");
 	}
 	my @urls = ();
+	my $urlparser = sub {
+		my $self = shift;
+		my $elt = shift;
+
+		my $url = WWW::Google::SiteMap::URL->new();
+		foreach my $c ($elt->children) {
+			my $var = $c->gi; $url->$var($c->text);
+		}
+		$self->purge;
+		push(@urls,$url);
+	};
 	my $twig = XML::Twig->new(
 		twig_roots => {
-			'urlset/url'	=> sub {
-				my $self = shift;
-				my $elt = shift;
-
-				my $url = WWW::Google::SiteMap::URL->new();
-				foreach my $c ($elt->children) {
-					my $var = $c->gi; $url->$var($c->text);
-				}
-				$self->purge;
-				push(@urls,$url);
-			},
+			'urlset/url'				=> $urlparser,
+			'sitemapindex/sitemap'		=> $urlparser,
 		},
 	);
 	$twig->safe_parse(join('',$fh->getlines)) || die "Could not parse $file";
@@ -134,16 +139,17 @@ automatically if the filename ends with .gz.
 sub write {
 	my $self = shift;
 	my $file = shift || $self->file ||
-		croak "No filename specified for WWW::Google::SiteMap::write";
+		croak "No filename specified for ".(ref($self)||$self)."::write";
 
 	my $fh;
 	if($file =~ /\.gz$/i) {
-		croak "IO::Zlib not available, cannot read compressed sitemaps"
+		croak "IO::Zlib not available, cannot write compressed sitemaps"
 			unless $ZLIB;
 		$fh = IO::Zlib->new($file,"wb9");
 	} else {
 		$fh = IO::File->new($file,"w");
 	}
+	croak "Could not create '$file'" unless $fh;
 	$fh->print($self->xml);
 }
 
@@ -160,7 +166,7 @@ sub urls {
 	return wantarray ? @urls : \@urls;
 }
 
-=item add(item,[item...])
+=item add($item,[$item...])
 
 Add the L<WWW::Google::SiteMap::URL> items listed to the sitemap.
 
@@ -228,9 +234,9 @@ sub add {
 	}
 }
 
-=item xml()
+=item xml();
 
-Return the xml representation of the sitemap
+Return the xml representation of the sitemap.
 
 =cut
 
@@ -298,6 +304,14 @@ sub pretty {
 =back
 
 =head1 SEE ALSO
+
+L<WWW::Google::SiteMap::Index>
+
+L<WWW::Google::SiteMap::Ping>
+
+L<WWW::Google::SiteMap::Robot>
+
+L<http://www.jasonkohles.com/software/WWW-Google-SiteMap>
 
 L<https://www.google.com/webmasters/sitemaps/docs/en/protocol.html>
 

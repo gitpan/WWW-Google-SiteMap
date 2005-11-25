@@ -1,5 +1,17 @@
 Revision history for Perl extension WWW::Google::SiteMap.
 
+1.00
+    - Version 1.00 Released!
+    - Fixed Zlib detection problem reported by Lance Cleveland.
+    - Check to make sure that the sitemap file was opened correctly, rather
+      than just crashing when we try to write to it, also reported by
+      Lance Cleveland.
+    - Added support for sitemap indexes (see WWW::Google::SiteMap::Index)
+    - Added support for notifying Google when your sitemaps and sitemap
+      indexes are updated (see WWW::Google::SiteMap::Ping).  Suggested by
+      Frank Naude.
+    - Fixed a bug in the ISO-8601 time format checking.
+
 0.03
     - Changed from XML::Simple to XML::Twig for XML parsing/generating, this
       means you can now validate your sitemaps with an XML validator.
