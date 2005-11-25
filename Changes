@@ -1,5 +1,9 @@
 Revision history for Perl extension WWW::Google::SiteMap.
 
+1.01
+    - Accidentally forgot to include the new WWW::Google::SiteMap::Robot
+      class, which helps build sitemaps by spidering your web site.
+
 1.00
     - Version 1.00 Released!
     - Fixed Zlib detection problem reported by Lance Cleveland.
