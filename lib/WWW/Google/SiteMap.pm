@@ -1,5 +1,5 @@
 package WWW::Google::SiteMap;
-our $VERSION = '1.01';
+our $VERSION = '1.02';
 
 =head1 NAME
 
@@ -255,7 +255,9 @@ sub xml {
 		$_->as_elt->paste(last_child => $xml);
 	}
 	$xml->set_pretty_print($self->pretty);
-	return $xml->sprint();
+	my $header = '<?xml version="1.0" encoding="UTF-8"?>';
+	if($self->pretty) { $header .= "\n" }
+	return $header.$xml->sprint();
 }
 
 =item file()

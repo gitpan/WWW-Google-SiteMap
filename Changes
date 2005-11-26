@@ -1,5 +1,11 @@
 Revision history for Perl extension WWW::Google::SiteMap.
 
+1.02
+    - Fix a problem caused by the switch to XML::Twig, which was leaving off
+      some of the XML header information.  Reported by Olaf Anders.
+    - Fixed a bug with WWW::Google::SiteMap::Robot, which forgot to load the
+      WWW::Google::SiteMap::Ping module before trying to send pings.
+ 
 1.01
     - Accidentally forgot to include the new WWW::Google::SiteMap::Robot
       class, which helps build sitemaps by spidering your web site.

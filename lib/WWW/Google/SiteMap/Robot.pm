@@ -1,5 +1,5 @@
 package WWW::Google::SiteMap::Robot;
-our $VERSION = '1.01';
+our $VERSION = '1.02';
 
 =head1 NAME
 
@@ -35,6 +35,7 @@ use WWW::RobotRules;
 use Carp qw(croak);
 use POSIX qw(strftime);
 use WWW::Google::SiteMap;
+use WWW::Google::SiteMap::Ping;
 
 =head1 METHODS
 
