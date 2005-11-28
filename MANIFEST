@@ -7,6 +7,7 @@ t/WWW-Google-SiteMap-URL.t
 t/WWW-Google-SiteMap-Index.t
 t/WWW-Google-SiteMap-Ping.t
 t/WWW-Google-SiteMap-Robot.t
+t/pod.t
 lib/WWW/Google/SiteMap.pm
 lib/WWW/Google/SiteMap/URL.pm
 lib/WWW/Google/SiteMap/Index.pm

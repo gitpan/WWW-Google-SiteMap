@@ -1,5 +1,5 @@
 package WWW::Google::SiteMap;
-our $VERSION = '1.02';
+our $VERSION = '1.03';
 
 =head1 NAME
 
@@ -304,6 +304,13 @@ sub pretty {
 }
 
 =back
+
+=head1 MODULE HOME PAGE
+
+The home page of this module is
+L<http://www.jasonkohles.com/software/WWW-Google-SiteMap>.  This is where you
+can always find the latest version, development versions, and bug reports.  You
+will also find a link there to report bugs.
 
 =head1 SEE ALSO
 

@@ -1,5 +1,13 @@
 Revision history for Perl extension WWW::Google::SiteMap.
 
+1.03
+    - Removed some leftover debugging output from WWW::Google::SiteMap::Robot.
+    - Fixed date generation to deal with strangeness in the dates that Google
+      will accept.  Note that this means some date/time strings that were
+      previously accepted may now fail.  See L<WWW::Google::SiteMap::URL> for
+      details of the acceptable values to lastmod().
+    - Added some more tests.
+
 1.02
     - Fix a problem caused by the switch to XML::Twig, which was leaving off
       some of the XML header information.  Reported by Olaf Anders.

@@ -1,5 +1,5 @@
 package WWW::Google::SiteMap::Robot;
-our $VERSION = '1.02';
+our $VERSION = '1.03';
 
 =head1 NAME
 
@@ -275,7 +275,6 @@ sub robot_rules {
 		my $url = "http://".$self->domain."/robots.txt";
 		my $mech = $self->mechanize();
 		$mech->get($url);
-		print $mech->content;
 		$self->{robot_rules}->parse($url,$mech->content);
 	}
 	return $self->{robot_rules};
@@ -421,10 +420,9 @@ sub run {
 			$mech->get($url);
 			if($mech->success) {
 				# extract the last modification time from the page
-				my $lastmod = strftime(
-					"%FT%T",localtime(time()+$mech->response->current_age())
-				);
-				$self->{storage}->{$url} = "SUCCESS $lastmod";
+				my $modtime = $mech->response->last_modified()
+					|| (time - $mech->response->current_age);
+				$self->{storage}->{$url} = "SUCCESS $modtime";
 				# add any links in the page to our todo list
 				foreach($mech->links) {
 					$self->{storage}->{$_->url_abs} ||= '';
@@ -452,27 +450,22 @@ sub _check_restrictions {
 
 	# some hard-coded restrictions for safety sake
 	if($url !~ /^(http|https):/) {
-		print "Restricted by http/https match\n";
 		return 1;
 	}
 
 	foreach my $r ($self->restrict) {
 		if(ref($r) eq 'Regexp' && $url =~ /$r/) {
-			print "Restricted by Regexp $r\n";
 			return 1;
 		}
 		if(ref($r) eq 'CODE' && $r->($url)) {
-			print "Restricted by code reference\n";
 			return 1
 		}
 	}
 	my $domain = $self->domain;
 	if($url !~ m{^\w+://$domain}o) {
-		print "Restricted by domain match\n";
 		return 1;
 	}
 	unless($self->robot_rules->allowed($url)) {
-		print "Restricted by robots.txt\n";
 		return 1;
 	}
 	return 0;
@@ -488,7 +481,10 @@ Google (if a sitemap url was specified).
 sub write_sitemap {
 	my $self = shift;
 
-	my $map = WWW::Google::SiteMap->new(file => $self->sitemap_file);
+	my $map = WWW::Google::SiteMap->new(
+		file	=> $self->sitemap_file,
+		pretty	=> 1,
+	);
 	while(my($url,$val) = each(%{$self->{storage}})) {
 		next unless $val =~ /^SUCCESS /;
 		my(undef,$lastmod) = split(' ',$val);
@@ -496,7 +492,6 @@ sub write_sitemap {
 			loc			=> $url,
 			lastmod		=> $lastmod,
 		));
-		print "$url: $lastmod\n";
 	}
 	$map->write;
 
@@ -539,6 +534,13 @@ sub _url_data_match {
     );
     $robot->run();
   }
+
+=head1 MODULE HOME PAGE
+
+The home page of this module is
+L<http://www.jasonkohles.com/software/WWW-Google-SiteMap>.  This is where you
+can always find the latest version, development versions, and bug reports.  You
+will also find a link there to report bugs.
 
 =head1 SEE ALSO
 

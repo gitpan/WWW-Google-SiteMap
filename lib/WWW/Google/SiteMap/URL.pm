@@ -1,5 +1,7 @@
 package WWW::Google::SiteMap::URL;
-our $VERSION = '1.02';
+our $VERSION = '1.03';
+use DateTime;
+use POSIX qw(strftime);
 
 =head1 NAME
 
@@ -78,19 +80,94 @@ sub changefreq {
 
 =item lastmod()
 
-Set the last modified time.
+Set the last modified time.  You have to provide this as one of the following:
+
+=over 4
+
+=item a complete ISO8601 time string
+
+A complete time string will be accepted in exactly this format:
+
+  YYYY-MM-DDTHH:MM:SS+TZ:TZ
+  YYYY   - 4-digit year
+  MM     - 2-digit month (zero padded)
+  DD     - 2-digit year (zero padded)
+  T      - literal character 'T'
+  HH     - 2-digit hour (24-hour, zero padded)
+  SS     - 2-digit second (zero padded)
+  +TZ:TZ - Timezone offset (hours and minutes from GMT, 2-digit, zero padded)
+
+=item epoch time
+
+Seconds since the epoch, such as would be returned from time().  If you provide
+an epoch time, then an appropriate ISO8601 time will be constructed with
+gmtime() (which means the timezone offset will be +00:00).  If anyone knows
+of a way to determine the timezone offset of the current host that is
+cross-platform and doesn't add dozens of dependencies then I might change this.
+
+=item an ISO8601 date (YYYY-MM-DD)
+
+A simple date in YYYY-MM-DD format.  The time will be set to 00:00:00+00:00.
+
+=item a L<DateTime> object.
+
+If a L<DateTime> object is provided, then an appropriate timestamp will be
+constructed from it.
+
+=item a L<HTTP::Response> object.
+
+If given an L<HTTP::Response> object, the last modified time will be
+calculated from whatever time information is available in the response
+headers.  Currently this means either the Last-Modified header, or tue
+current time - the current_age() calculated by the response object.
+This is useful for building web crawlers.
+
+=back
+
+Note that in order to conserve memory, any of these items that you provide
+will be converted to a complete ISO8601 time string when they are stored.
+This means that if you pass an object to lastmod(), you can't get it back
+out.  If anyone actually has a need to get the objects back out, then I
+might make a configuration option to store the objects internally.
+
+If you have suggestions for other types of date/time objects or formats
+that would be usefule, let me know and I'll consider them.
 
 =cut
 
 sub lastmod {
-	shift->_doval('lastmod', sub {
-		local $_ = shift;
-		return unless defined;
-		return 'must be an ISO-8601 formatted date string' unless (
-			/^\d{4}-\d{2}-\d{2}(T\d\d:\d\d(:\d\d)?(\+\d\d:\d\d)?)?$/
-		);
-		return;
-	}, @_);
+	my $self = shift;
+
+	return $self->{lastmod} unless @_;
+
+	my $value = shift;
+	if(ref($value)) {
+		if($value->isa('DateTime')) { # DateTime object
+			my($date,$tzoff) = $value->strftime("%FT%T","%z");
+			if($tzoff =~ /^([+-])?(\d\d):?(\d\d)/) {
+				$tzoff = ($1 || '+').$2.':'.($3||'00');
+			} else {
+				$tzoff = '+00:00';
+			}
+			$self->{lastmod} = $date.$tzoff;
+		} elsif($value->isa('HTTP::Response')) {
+			my $modtime = $value->last_modified()
+				|| (time - $value->current_age());
+			$self->{lastmod} = strftime("%FT%T+00:00",gmtime($_));
+		}
+	} else {
+		local $_ = $value;
+		if(/^\d+$/) { # epoch time
+			$self->{lastmod} = strftime("%FT%T+00:00",gmtime($_));
+		} elsif(/^\d\d\d\d-\d\d-\d\d$/) {
+			$self->{lastmod} = $_.'T00:00:00+00:00';
+		} elsif(/^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\+\d\d:\d\d$/) {
+			$self->{lastmod} = $_;
+		}
+	}
+
+	return $self->{lastmod} if $self->{lastmod};
+	$self->_err("'$_' is not a valid value for lastmod");
 }
 
 =item priority()
@@ -123,6 +200,12 @@ sub _doval {
 		$self->{$var} = $value;
 	}
 }
+sub _err {
+	my $self = shift;
+
+	if($self->{lenient}) { carp @_ } else { croak @_ }
+}
+
 
 =item delete()
 
@@ -151,15 +234,23 @@ sub as_elt {
 	my $self = shift;
 	my $type = shift || 'url';
 	my @fields = @_;
-	unless(@fields) {
-		@fields = qw(loc changefreq lastmod priority);
+	unless(@fields) { @fields = qw(loc changefreq lastmod priority) }
+	my @elements = ();
+	foreach(@fields) {
+		my $val = $self->$_() || next;
+		push(@elements, XML::Twig::Elt->new($_,{},$val));
 	}
-	return XML::Twig::Elt->new($type, {}, map {
-		XML::Twig::Elt->new($_,{},$self->{$_})
-	} grep { defined $self->{$_} } @fields);
+	return XML::Twig::Elt->new($type, {}, @elements);
 }
 
 =back
+
+=head1 MODULE HOME PAGE
+
+The home page of this module is
+L<http://www.jasonkohles.com/software/WWW-Google-SiteMap>.  This is where you
+can always find the latest version, development versions, and bug reports.  You
+will also find a link there to report bugs.
 
 =head1 SEE ALSO
 

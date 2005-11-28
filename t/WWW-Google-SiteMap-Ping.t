@@ -1,11 +1,13 @@
-use Test::More tests => 5;
+use Test::More tests => 7;
 BEGIN { use_ok('WWW::Google::SiteMap::Ping') };
 
 my $baseurl = "http://www.example.com";
 
-my $ping = WWW::Google::SiteMap::Ping->new(
+my $ping;
+ok($ping = WWW::Google::SiteMap::Ping->new(
 	"http://www.google.com/sitemap.xml",
-);
+));
+isa_ok($ping,'WWW::Google::SiteMap::Ping');
 
 is($ping->submit(),1,"One ping succeeded");
 my @success = $ping->success;
