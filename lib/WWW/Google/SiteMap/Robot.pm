@@ -1,5 +1,5 @@
 package WWW::Google::SiteMap::Robot;
-our $VERSION = '1.03';
+use vars qw($VERSION); $VERSION = '1.04';
 
 =head1 NAME
 

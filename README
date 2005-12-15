@@ -1,4 +1,4 @@
-WWW-Google-SiteMap version 0.01
+WWW-Google-SiteMap version 1.04
 ===========================
 
 The Sitemap Protocol allows you to inform search engine crawlers about
@@ -26,6 +26,9 @@ This module requires these other modules and libraries:
   XML::Simple
   IO::Zlib
   IO::File
+
+If you want to use the optional feature to notify Google when your sitemaps
+are updated, you will also need LWP.
 
 COPYRIGHT AND LICENCE
 

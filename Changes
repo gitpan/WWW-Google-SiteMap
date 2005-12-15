@@ -1,5 +1,11 @@
 Revision history for Perl extension WWW::Google::SiteMap.
 
+1.04
+    - Fixed a documentation error in WWW::Google::SiteMap, and a problem with
+      the XML headers generated for sitemap indexes, both reported by
+      Michael Smith.
+    - Use 'use vars' instead of 'our' for older versions of perl.
+
 1.03
     - Removed some leftover debugging output from WWW::Google::SiteMap::Robot.
     - Fixed date generation to deal with strangeness in the dates that Google

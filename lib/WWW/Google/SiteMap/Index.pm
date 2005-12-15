@@ -1,5 +1,5 @@
 package WWW::Google::SiteMap::Index;
-our $VERSION = '1.03';
+use vars qw($VERSION); $VERSION = '1.04';
 
 =head1 NAME
 
@@ -11,7 +11,6 @@ WWW::Google::SiteMap::Index - Perl extension for managing Google SiteMap Indexes
   
   my $index = WWW::Google::SiteMap::Index->new(
     file => 'sitemap-index.gz',
-    url  => 'http://www.jasonkohles.com/sitemap-index.gz',
   );
   
   $index->add(WWW::Google::SiteMap::URL->new(
@@ -123,7 +122,9 @@ sub xml {
 		$_->as_elt('sitemap',qw(loc lastmod))->paste(last_child => $xml);
 	}
 	$xml->set_pretty_print($self->pretty);
-	return $xml->sprint();
+	my $header = '<?xml version="1.0" encoding="UTF-8"?>';
+	if($self->pretty) { $header .= "\n" }
+	return $header.$xml->sprint();
 }
 
 =item file();
