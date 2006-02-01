@@ -1,6 +1,5 @@
 package WWW::Google::SiteMap::URL;
-use vars qw($VERSION); $VERSION = '1.04';
-use DateTime;
+use vars qw($VERSION); $VERSION = '1.06';
 use POSIX qw(strftime);
 
 =head1 NAME

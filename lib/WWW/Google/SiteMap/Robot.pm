@@ -1,5 +1,5 @@
 package WWW::Google::SiteMap::Robot;
-use vars qw($VERSION); $VERSION = '1.04';
+use vars qw($VERSION); $VERSION = '1.06';
 
 =head1 NAME
 
@@ -18,7 +18,7 @@ WWW::Google::SiteMap::Robot - Perl extension for creating Google SiteMaps by spi
     sitemap_url   => 'http://www.jasonkohles.com/sitemap.gz',
     user_agent    => 'MyOwnSpider/1.0',
   );
-  $robot->start;
+  $robot->run();
 
 =head1 DESCRIPTION
 
@@ -425,7 +425,9 @@ sub run {
 				$self->{storage}->{$url} = "SUCCESS $modtime";
 				# add any links in the page to our todo list
 				foreach($mech->links) {
-					$self->{storage}->{$_->url_abs} ||= '';
+                    my $url = $_->url_abs;
+                    $url =~ s/#[^#]+$//;
+					$self->{storage}->{$url} ||= '';
 				}
 			} else {
 				$self->{storage}->{$url} = 'ERROR '.$mech->status();

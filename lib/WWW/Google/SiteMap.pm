@@ -1,5 +1,5 @@
 package WWW::Google::SiteMap;
-use vars qw($VERSION); $VERSION = '1.04';
+use vars qw($VERSION); $VERSION = '1.06';
 
 =head1 NAME
 
@@ -24,7 +24,7 @@ WWW::Google::SiteMap - Perl extension for managing Google SiteMaps
     loc        => "http://www.jasonkohles.com/$_/",
     changefreq => 'weekly',
     priority   => 0.9, # lower priority than the home page
-  ) for qw(
+  }) for qw(
     software gpg hamradio photos scuba snippets tools
   );
 
