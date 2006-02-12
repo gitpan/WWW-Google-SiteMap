@@ -1,5 +1,17 @@
 Revision history for Perl extension WWW::Google::SiteMap.
 
+1.07
+    - Added changes for 1.06 to Changes file, which were accidentally left
+      out of the last release.
+    - Fixed the WWW-Google-SiteMap-Robot.t test to skip testing if
+      WWW::Mechanize is not installed, reported by Jan Kratochvil.
+
+1.06
+    - Correction to documentatioin for WWW::Google::SiteMap::Robot
+      ($robot->start should be $robot->run), reported by Martin Kissner.
+    - Adjusted WWW::Google::SiteMap::Robot to discard anchors from URLs,
+      reported by Martin Kissner.
+   
 1.05
     - Removed an accidental prerequisite from WWW::Google::SiteMap::URL.  You
       can give it DateTime objects to set the lastmod option, but you don't

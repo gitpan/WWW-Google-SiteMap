@@ -1,5 +1,13 @@
-use Test::More tests => 1;
-BEGIN { use_ok('WWW::Google::SiteMap::Robot') };
+use Test::More;
+BEGIN {
+    eval { require WWW::Mechanize };
+    if($@) {
+        plan skip_all => "Can't test WWW::Google::SiteMap::Robot without WWW::Mechanize";
+    } else {
+        plan tests => 1;
+    }
+    use_ok('WWW::Google::SiteMap::Robot');
+};
 
 #my $robot;
 #ok($robot = WWW::Google::SiteMap::Robot->new());
