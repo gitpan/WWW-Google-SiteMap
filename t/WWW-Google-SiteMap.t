@@ -1,5 +1,8 @@
-use Test::More tests => 6;
-BEGIN { use_ok('WWW::Google::SiteMap') };
+use Test::More tests => 7;
+BEGIN {
+    unlink("test.xml");
+    use_ok('WWW::Google::SiteMap');
+};
 
 my $baseurl = "http://www.jasonkohles.com/software/WWW-Google-SiteMap";
 
@@ -14,6 +17,12 @@ ok($map->add(WWW::Google::SiteMap::URL->new(
 )));
 ok($map->add(
 	loc			=> "$baseurl/test2",
+	lastmod		=> '2005-07-11',
+	changefreq	=> 'weekly',
+	priority	=> 0.1,
+));
+ok($map->add(
+	loc			=> "$baseurl/test2?foo=1&bar=2&baz=3>2",
 	lastmod		=> '2005-07-11',
 	changefreq	=> 'weekly',
 	priority	=> 0.1,

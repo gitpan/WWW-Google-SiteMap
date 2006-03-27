@@ -1,6 +1,5 @@
 package WWW::Google::SiteMap::URL;
-use vars qw($VERSION); $VERSION = '1.07';
-use POSIX qw(strftime);
+use vars qw($VERSION); $VERSION = '1.08';
 
 =head1 NAME
 
@@ -27,6 +26,8 @@ use strict;
 use warnings;
 use Carp qw(carp croak);
 use XML::Twig qw();
+use POSIX qw(strftime);
+use HTML::Entities qw(encode_entities);
 
 =item new()
 
@@ -237,7 +238,13 @@ sub as_elt {
 	my @elements = ();
 	foreach(@fields) {
 		my $val = $self->$_() || next;
-		push(@elements, XML::Twig::Elt->new($_,{},$val));
+        if($_ eq 'loc') {
+            $val = XML::Twig::Elt->new('#PCDATA' => encode_entities($val));
+            $val->set_asis(1);
+        } else {
+            $val = XML::Twig::Elt->new('#PCDATA' => $val);
+        }
+        push(@elements,$val->wrap_in($_));
 	}
 	return XML::Twig::Elt->new($type, {}, @elements);
 }

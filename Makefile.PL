@@ -1,13 +1,19 @@
-use ExtUtils::MakeMaker;
-WriteMakefile(
-	NAME				=> 'WWW::Google::SiteMap',
-	VERSION_FROM		=> 'lib/WWW/Google/SiteMap.pm',
-	PREREQ_PM			=> {
-		'XML::Twig'			=> 0,
-		'IO::File'			=> 0,
-	},
-	($] >= 5.005 ? (
-		ABSTRACT_FROM	=> 'lib/WWW/Google/SiteMap.pm',
-		AUTHOR			=> 'Jason Kohles <email@jasonkohles.com>'
-	) : ()),
-);
+use inc::Module::Install;
+
+name 'WWW-Google-SiteMap';
+license 'perl';
+all_from 'lib/WWW/Google/SiteMap.pm';
+requires 'XML::Twig';
+requires 'IO::File';
+requires 'Carp';
+requires 'POSIX';
+requires 'URI::Escape';
+recommends 'IO::Zlib';
+recommends 'LWP::UserAgent';
+recommends 'WWW::Mechanize';
+recommends 'WWW::RobotRules';
+
+auto_install;
+WriteAll;
+
+# TODO - Module::Signature

@@ -1,5 +1,8 @@
 use Test::More tests => 6;
-BEGIN { use_ok('WWW::Google::SiteMap::Index') };
+BEGIN {
+    unlink("test-index.xml");
+    use_ok('WWW::Google::SiteMap::Index');
+};
 
 my $baseurl = "http://www.example.com";
 

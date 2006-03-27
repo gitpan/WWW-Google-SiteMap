@@ -1,5 +1,5 @@
 package WWW::Google::SiteMap::Index;
-use vars qw($VERSION); $VERSION = '1.07';
+use vars qw($VERSION); $VERSION = '1.08';
 
 =head1 NAME
 

@@ -1,5 +1,12 @@
 Revision history for Perl extension WWW::Google::SiteMap.
 
+1.08
+    - Converted installer from ExtUtils::MakeMaker to Module::Install, which
+      should make it easier to install for Windows users.
+    - Fixed a uri-encoding problem in WWW::Google::SiteMap::URL, reported
+      by Jeff Horn.
+    - Added some additional test cases and cleaned up some test cases.
+
 1.07
     - Added changes for 1.06 to Changes file, which were accidentally left
       out of the last release.
@@ -7,7 +14,7 @@ Revision history for Perl extension WWW::Google::SiteMap.
       WWW::Mechanize is not installed, reported by Jan Kratochvil.
 
 1.06
-    - Correction to documentatioin for WWW::Google::SiteMap::Robot
+    - Correction to documentation for WWW::Google::SiteMap::Robot
       ($robot->start should be $robot->run), reported by Martin Kissner.
     - Adjusted WWW::Google::SiteMap::Robot to discard anchors from URLs,
       reported by Martin Kissner.

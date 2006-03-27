@@ -1,5 +1,5 @@
 package WWW::Google::SiteMap;
-use vars qw($VERSION); $VERSION = '1.07';
+use vars qw($VERSION); $VERSION = '1.08';
 
 =head1 NAME
 
@@ -50,11 +50,11 @@ my $ZLIB = $IO::Zlib::VERSION;
 use IO::File qw();
 require UNIVERSAL;
 use Carp qw(carp croak);
+use HTML::Entities qw(decode_entities);
 
 =head1 METHODS
 
 =over 4
-
 
 =item new()
 
@@ -112,13 +112,18 @@ sub read {
 
 		my $url = WWW::Google::SiteMap::URL->new();
 		foreach my $c ($elt->children) {
-			my $var = $c->gi; $url->$var($c->text);
+			my $var = $c->gi;
+            if($var eq 'loc') {
+                $url->$var(decode_entities($c->text));
+            } else {
+                $url->$var($c->text);
+            }
 		}
 		$self->purge;
 		push(@urls,$url);
 	};
 	my $twig = XML::Twig->new(
-		twig_roots => {
+		twig_roots      => {
 			'urlset/url'				=> $urlparser,
 			'sitemapindex/sitemap'		=> $urlparser,
 		},
