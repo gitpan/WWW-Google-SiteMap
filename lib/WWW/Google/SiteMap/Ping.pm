@@ -1,5 +1,5 @@
 package WWW::Google::SiteMap::Ping;
-use vars qw($VERSION); $VERSION = '1.08';
+use vars qw($VERSION); $VERSION = '1.09';
 
 =head1 NAME
 

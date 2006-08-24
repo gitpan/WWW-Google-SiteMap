@@ -1,5 +1,5 @@
 package WWW::Google::SiteMap::URL;
-use vars qw($VERSION); $VERSION = '1.08';
+use vars qw($VERSION); $VERSION = '1.09';
 
 =head1 NAME
 
@@ -143,7 +143,7 @@ sub lastmod {
 	my $value = shift;
 	if(ref($value)) {
 		if($value->isa('DateTime')) { # DateTime object
-			my($date,$tzoff) = $value->strftime("%FT%T","%z");
+			my($date,$tzoff) = $value->strftime("%Y-%m-%dT%T","%z");
 			if($tzoff =~ /^([+-])?(\d\d):?(\d\d)/) {
 				$tzoff = ($1 || '+').$2.':'.($3||'00');
 			} else {
@@ -153,12 +153,12 @@ sub lastmod {
 		} elsif($value->isa('HTTP::Response')) {
 			my $modtime = $value->last_modified()
 				|| (time - $value->current_age());
-			$self->{lastmod} = strftime("%FT%T+00:00",gmtime($_));
+			$self->{lastmod} = strftime("%Y-%m-%dT%T+00:00",gmtime($_));
 		}
 	} else {
 		local $_ = $value;
 		if(/^\d+$/) { # epoch time
-			$self->{lastmod} = strftime("%FT%T+00:00",gmtime($_));
+			$self->{lastmod} = strftime("%Y-%m-%dT%T+00:00",gmtime($_));
 		} elsif(/^\d\d\d\d-\d\d-\d\d$/) {
 			$self->{lastmod} = $_.'T00:00:00+00:00';
 		} elsif(/^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\+\d\d:\d\d$/) {

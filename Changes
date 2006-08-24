@@ -1,5 +1,12 @@
 Revision history for Perl extension WWW::Google::SiteMap.
 
+1.09
+    - Replaced %F with %Y-%m-%d in strftime calls, to correct a Solaris bug
+      (since Solaris strftime doesn't know about %F).  Reproted by Fredrik
+      Acosta.
+    - Added more information to error messages when parsing an existing
+      sitemap fails.  Reported by Vinko Vrsalovic Bolte.
+
 1.08
     - Converted installer from ExtUtils::MakeMaker to Module::Install, which
       should make it easier to install for Windows users.

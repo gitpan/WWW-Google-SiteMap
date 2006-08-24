@@ -1,5 +1,5 @@
 package WWW::Google::SiteMap;
-use vars qw($VERSION); $VERSION = '1.08';
+use vars qw($VERSION); $VERSION = '1.09';
 
 =head1 NAME
 
@@ -128,7 +128,8 @@ sub read {
 			'sitemapindex/sitemap'		=> $urlparser,
 		},
 	);
-	$twig->safe_parse(join('',$fh->getlines)) || die "Could not parse $file";
+	$twig->safe_parse(join('',$fh->getlines))
+        or die "Could not parse $file ($@)";
 	$self->urls(@urls);
 }
 
