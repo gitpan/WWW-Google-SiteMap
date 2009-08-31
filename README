@@ -1,40 +1,8 @@
 WWW-Google-SiteMap
 ==================
 
-The Sitemap Protocol allows you to inform search engine crawlers about
-URLs on your Web sites that are available for crawling. A Sitemap con-
-sists of a list of URLs and may also contain additional information
-about those URLs, such as when they were last modified, how frequently
-they change, etc.
+WWW::Google::SiteMap is DEPRECATED
 
-This module allows you to create and modify sitemaps.
-
-INSTALLATION
-
-To install this module type the following:
-
-   perl Makefile.PL
-   make
-   make test
-   make install
-
-DEPENDENCIES
-
-This module requires these other modules and libraries:
-
-  Carp
-  XML::Simple
-  IO::Zlib
-  IO::File
-
-If you want to use the optional feature to notify Google when your sitemaps
-are updated, you will also need LWP.
-
-COPYRIGHT AND LICENCE
-
-Copyright (C) 2005 by Jason Kohles
-
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself, either Perl version 5.8.4 or,
-at your option, any later version of Perl 5 you may have available.
+Now that more search engines than just Google are supporting the Sitemap
+protocol, the WWW::Google::SiteMap module has been renamed to Search::Sitemap
 

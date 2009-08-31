@@ -1,9 +1,15 @@
 package WWW::Google::SiteMap::Robot;
-use vars qw($VERSION); $VERSION = '1.09';
+use vars qw($VERSION); $VERSION = '1.10';
 
 =head1 NAME
 
-WWW::Google::SiteMap::Robot - Perl extension for creating Google SiteMaps by spidering a site
+WWW::Google::SiteMap::Robot - DEPRECATED - See Search::Sitemap
+
+=head1 DEPRECATED
+
+Now that more search engines than just Google are supporting the Sitemap
+protocol, the WWW::Google::SiteMap module has been renamed to
+L<Search::Sitemap>.
 
 =head1 SYNOPSIS
 

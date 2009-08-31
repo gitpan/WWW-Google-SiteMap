@@ -4,7 +4,6 @@ inc/Module/AutoInstall.pm
 inc/Module/Install.pm
 inc/Module/Install/AutoInstall.pm
 inc/Module/Install/Base.pm
-inc/Module/Install/Build.pm
 inc/Module/Install/Can.pm
 inc/Module/Install/Fetch.pm
 inc/Module/Install/Include.pm
@@ -18,14 +17,6 @@ lib/WWW/Google/SiteMap/Ping.pm
 lib/WWW/Google/SiteMap/Robot.pm
 lib/WWW/Google/SiteMap/URL.pm
 Makefile.PL
-MANIFEST
-MANIFEST.SKIP
+MANIFEST			This list of files
 META.yml
 README
-t/01_app.t
-t/02_pod.t
-t/WWW-Google-SiteMap-Index.t
-t/WWW-Google-SiteMap-Ping.t
-t/WWW-Google-SiteMap-Robot.t
-t/WWW-Google-SiteMap-URL.t
-t/WWW-Google-SiteMap.t

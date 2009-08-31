@@ -1,9 +1,15 @@
 package WWW::Google::SiteMap::Ping;
-use vars qw($VERSION); $VERSION = '1.09';
+use vars qw($VERSION); $VERSION = '1.10';
 
 =head1 NAME
 
-WWW::Google::SiteMap::Ping - Perl extension for sending update pings to Google
+WWW::Google::SiteMap::Ping - DEPRECATED - See Search::Sitemap
+
+=head1 DEPRECATED
+
+Now that more search engines than just Google are supporting the Sitemap
+protocol, the WWW::Google::SiteMap module has been renamed to
+L<Search::Sitemap>.
 
 =head1 SYNOPSIS
 
